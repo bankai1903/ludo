@@ -1,16 +1,35 @@
-# React + Vite
+# Ludo Modern - Multiplayer Game
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+A high-fidelity, real-time multiplayer Ludo game built with Vanilla JavaScript, Node.js, and Socket.io. Features a Material Design 3 aesthetic, 3D animated dice, and smooth token transitions.
 
-Currently, two official plugins are available:
+## Features
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Babel](https://babeljs.io/) (or [oxc](https://oxc.rs) when used in [rolldown-vite](https://vite.dev/guide/rolldown)) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+- **Real-time Multiplayer**: Powered by Socket.io with room creation and joining logic.
+- **Material Design 3**: Modern aesthetic with glassmorphism sidebars and MD3 color palettes.
+- **3D Dice Animation**: Fully interactive 3D dice with pip-based faces and physics-inspired animations.
+- **Optimized Movement**: Smooth CSS transitions for token sliding and collision (capture) logic.
+- **Mobile Responsive**: Scales perfectly across different screen sizes.
 
-## React Compiler
+## Project Structure
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+- `public/`: Contains frontend assets (HTML, CSS, JS).
+- `server/`: Node.js Express server and Socket.io signaling.
 
-## Expanding the ESLint configuration
+## Setup & Local Development
 
-If you are developing a production application, we recommend using TypeScript with type-aware lint rules enabled. Check out the [TS template](https://github.com/vitejs/vite/tree/main/packages/create-vite/template-react-ts) for information on how to integrate TypeScript and [`typescript-eslint`](https://typescript-eslint.io) in your project.
+1.  **Install Dependencies**:
+    ```bash
+    npm install
+    ```
+2.  **Start the Server**:
+    ```bash
+    npm start
+    ```
+3.  **Play**:
+    Open `http://localhost:3005` in two different browser windows to play against yourself or share the Room ID with a friend.
+
+## Tech Stack
+
+- **Frontend**: HTML5, CSS3 (3D Transforms, CSS Grid), Vanilla JavaScript (ES6+).
+- **Backend**: Node.js, Express.
+- **Real-time**: Socket.io.
