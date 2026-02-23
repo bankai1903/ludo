@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ludo Modern - Material Design 3</title>
+    <!-- Relaxed CSP for development and extension compatibility -->
+    <meta http-equiv="Content-Security-Policy" content="default-src * 'unsafe-inline' 'unsafe-eval' data: blob:; script-src * 'unsafe-inline' 'unsafe-eval' blob:; connect-src * 'unsafe-inline' ws: wss:; style-src * 'unsafe-inline'; font-src * data: moz-extension: chrome-extension:;">
+    <link rel="stylesheet" href="style.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@700&family=Roboto:wght@400;700;900&display=swap" rel="stylesheet">
+    <script src="https://cdn.socket.io/4.7.2/socket.io.min.js"></script>
+</head>
+<body>
+    <div id="landing-page" class="screen">
+        <div class="card">
+            <h1>LUDO<span>MODERN</span></h1>
+            <div class="menu">
+                <button id="create-room-btn" class="primary-btn">CREATE NEW ROOM</button>
+                <div class="divider"><span>OR JOIN EXISTING</span></div>
+                <div class="join-box">
+                    <input type="text" id="join-room-input" placeholder="ROOM ID">
+                    <button id="join-room-btn" class="secondary-btn">JOIN</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div id="waiting-screen" class="screen hidden">
+        <div class="card">
+            <h2 style="margin-bottom: 1rem;">WAITING FOR PLAYER...</h2>
+            <div class="id-share">
+                <p style="color: var(--outline); font-weight: 600;">SHARE THIS CODE</p>
+                <div class="id-box">
+                    <span id="room-id-display">------</span>
+                    <button id="copy-btn" style="background:none; border:none; cursor:pointer; font-size:1.5rem;">📋</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div id="game-screen" class="screen hidden">
+        <div class="game-container">
+            <div id="ludo-board">
+                <!-- Board generated via JS -->
+            </div>
+            
+            <div id="controls">
+                <div class="player-info">
+                    <span id="player-role-indicator">YOU ARE PLAYER --</span>
+                </div>
+                
+                <div id="message-box">WAITING...</div>
+
+                <div class="dice-wrapper">
+                    <div id="dice-3d" class="dice-3d">
+                        <div class="face front" data-value="1">
+                            <span class="pip"></span>
+                        </div>
+                        <div class="face back" data-value="6">
+                            <span class="pip"></span><span class="pip"></span>
+                            <span class="pip"></span><span class="pip"></span>
+                            <span class="pip"></span><span class="pip"></span>
+                        </div>
+                        <div class="face right" data-value="3">
+                            <span class="pip"></span>
+                            <span class="pip"></span>
+                            <span class="pip"></span>
+                        </div>
+                        <div class="face left" data-value="4">
+                            <span class="pip"></span><span class="pip"></span>
+                            <span class="pip"></span><span class="pip"></span>
+                        </div>
+                        <div class="face top" data-value="5">
+                            <span class="pip"></span><span class="pip"></span>
+                            <span class="pip"></span>
+                            <span class="pip"></span><span class="pip"></span>
+                        </div>
+                        <div class="face bottom" data-value="2">
+                            <span class="pip"></span>
+                            <span class="pip"></span>
+                        </div>
+                    </div>
+                    <div id="dice-number-display" class="dice-number-display"></div>
+                </div>
+
+                <button id="roll-btn" class="roll-btn" disabled>ROLL DICE</button>
+
+                <div class="status-panel">
+                    <div id="status-red" class="status-box">RED</div>
+                    <div id="status-yellow" class="status-box">YELLOW</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>
