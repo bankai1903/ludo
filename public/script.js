@@ -215,8 +215,19 @@ function renderGameState() {
         updateDiceUI(gameState.diceValue, false);
     }
 
-    const cellCounts = {};
     const cellWidth = 100 / 15;
+    
+    // Group tokens by cell to handle stacking
+    const tokensByCell = {};
+    Object.entries(gameState.players).forEach(([pKey, pData]) => {
+        pData.tokens.forEach((pos, idx) => {
+            const coords = getCoordinates(pos, pKey);
+            const r_c = pos === 0 ? coords[idx] : coords;
+            const cellKey = `${r_c[0]}-${r_c[1]}`;
+            if (!tokensByCell[cellKey]) tokensByCell[cellKey] = [];
+            tokensByCell[cellKey].push({ pKey, idx, pos, r_c });
+        });
+    });
 
     Object.entries(gameState.players).forEach(([pKey, pData]) => {
         pData.tokens.forEach((pos, idx) => {
@@ -233,14 +244,34 @@ function renderGameState() {
 
             const coords = getCoordinates(pos, pKey);
             const [r, c] = pos === 0 ? coords[idx] : coords;
-            
             const cellKey = `${r}-${c}`;
-            cellCounts[cellKey] = (cellCounts[cellKey] || 0) + 1;
-            const offset = (cellCounts[cellKey] - 1) * 2; 
+            
+            // Stacking Logic: Show current turn tokens on top and spread out
+            const cellTokens = tokensByCell[cellKey];
+            // Sort cell tokens so the current turn's tokens are always "last" (on top)
+            const sortedAtCell = [...cellTokens].sort((a, b) => {
+                if (a.pKey === gameState.turn && b.pKey !== gameState.turn) return 1;
+                if (a.pKey !== gameState.turn && b.pKey === gameState.turn) return -1;
+                return 0;
+            });
+            
+            const visualIdx = sortedAtCell.findIndex(t => t.pKey === pKey && t.idx === idx);
+            const isActivePlayer = pKey === gameState.turn;
+            const isMultiple = cellTokens.length > 1;
 
-            // Use percent-based positioning for smooth transitions on all screen sizes
+            // Calculate offset. Spread more if it's the active player's turn to make them easy to click
+            const offset = visualIdx * (isMultiple ? 4 : 0); 
+
             token.style.top = `calc(${r * cellWidth}% + ${offset}px)`;
             token.style.left = `calc(${c * cellWidth}% + ${offset}px)`;
+            token.style.zIndex = isActivePlayer ? 20 + visualIdx : 10 + visualIdx;
+            
+            // "Pop" effect for active player if overlapping
+            if (isActivePlayer && isMultiple) {
+                token.style.transform = 'scale(1.2)';
+            } else {
+                token.style.transform = 'scale(1)';
+            }
             
             const isMyTurn = gameState.turn === myPlayerType && pKey === myPlayerType;
             const canMove = isMyTurn && gameState.diceValue !== 0 && isValidMove(pos, gameState.diceValue);

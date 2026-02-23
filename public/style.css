@@ -440,7 +440,7 @@ input:focus { border-color: var(--md-blue); }
     height: 34px;
     cursor: default;
     transition: all 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-    z-index: 100 !important;
+    z-index: 10;
     position: absolute;
     display: flex;
     align-items: center;
@@ -465,7 +465,7 @@ input:focus { border-color: var(--md-blue); }
 .token.clickable {
     cursor: pointer;
     animation: pulse-active 1.5s infinite ease-in-out;
-    z-index: 100 !important;
+    z-index: 100;
 }
 
 .token.clickable:hover {
