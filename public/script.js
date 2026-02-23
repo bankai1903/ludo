@@ -230,6 +230,7 @@ function renderGameState() {
     // Group tokens by cell to handle stacking
     const tokensByCell = {};
     Object.entries(gameState.players).forEach(([pKey, pData]) => {
+        if (pKey !== 'RED' && pKey !== 'YELLOW') return;
         pData.tokens.forEach((pos, idx) => {
             const coords = getCoordinates(pos, pKey);
             const r_c = pos === 0 ? coords[idx] : coords;
@@ -240,6 +241,7 @@ function renderGameState() {
     });
 
     Object.entries(gameState.players).forEach(([pKey, pData]) => {
+        if (pKey !== 'RED' && pKey !== 'YELLOW') return;
         pData.tokens.forEach((pos, idx) => {
             const tokenId = `token-${pKey}-${idx}`;
             let token = document.getElementById(tokenId);
@@ -299,7 +301,7 @@ function renderGameState() {
     });
 
     // Update Status
-    ['RED', 'GREEN', 'YELLOW', 'BLUE'].forEach(color => {
+    ['RED', 'YELLOW'].forEach(color => {
         const el = document.getElementById(`status-${color.toLowerCase()}`);
         if (el) el.classList.toggle('active', gameState.turn === color);
     });
@@ -324,22 +326,20 @@ function moveToken(idx) {
     const currentPos = gameState.players[myPlayerType].tokens[idx];
     let nextPos = currentPos === 0 ? 1 : currentPos + gameState.diceValue;
 
-    const colors = ['RED', 'GREEN', 'YELLOW', 'BLUE'];
+    const colors = ['RED', 'YELLOW'];
     
     // Predictive state for capture logic
     const newPlayers = JSON.parse(JSON.stringify(gameState.players));
     newPlayers[myPlayerType].tokens[idx] = nextPos;
 
     const getNextTurn = (currentTurn) => {
-        const idx = colors.indexOf(currentTurn);
-        return colors[(idx + 1) % colors.length];
+        const turnIdx = colors.indexOf(currentTurn);
+        return colors[(turnIdx + 1) % colors.length];
     };
 
     const getAbs = (p, pType) => {
         let offset = 0;
-        if (pType === 'GREEN') offset = 13;
         if (pType === 'YELLOW') offset = 26;
-        if (pType === 'BLUE') offset = 39;
         return (p - 1 + offset) % TRACK_LENGTH;
     };
 
@@ -454,7 +454,7 @@ rollBtn.onclick = () => {
         if (!canMove && val !== 6) {
             messageBox.textContent = `You rolled a ${val}. No moves! Switching turn...`;
             setTimeout(() => {
-                const colors = ['RED', 'GREEN', 'YELLOW', 'BLUE'];
+                const colors = ['RED', 'YELLOW'];
                 const nextIdx = (colors.indexOf(gameState.turn) + 1) % colors.length;
                 const nextTurn = colors[nextIdx];
                 gameState.turn = nextTurn;
