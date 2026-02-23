@@ -7,7 +7,9 @@ let gameState = {
     isRolling: false,
     players: {
         RED: { tokens: [0, 0, 0, 0] },
+        GREEN: { tokens: [0, 0, 0, 0] },
         YELLOW: { tokens: [0, 0, 0, 0] },
+        BLUE: { tokens: [0, 0, 0, 0] },
     },
     winner: null,
 };
@@ -157,12 +159,16 @@ const GRID_CONFIG = {
         [7, 0]
     ],
     BASE: {
-        RED: [[1, 1], [1, 4], [4, 1], [4, 4]],
-        YELLOW: [[10, 10], [10, 13], [13, 10], [13, 13]]
+        RED:    [[1.5, 1.5], [1.5, 3.5], [3.5, 1.5], [3.5, 3.5]],
+        GREEN:  [[1.5, 10.5], [1.5, 12.5], [3.5, 10.5], [3.5, 12.5]],
+        YELLOW: [[10.5, 10.5], [10.5, 12.5], [12.5, 10.5], [12.5, 12.5]],
+        BLUE:   [[10.5, 1.5], [10.5, 3.5], [12.5, 1.5], [12.5, 3.5]]
     },
     HOME_START: {
-        RED: (pos) => [7, 1 + (pos - 53)],
-        YELLOW: (pos) => [7, 13 - (pos - 53)]
+        RED:    (pos) => [7, 1 + (pos - 53)],
+        GREEN:  (pos) => [1 + (pos - 53), 7],
+        YELLOW: (pos) => [7, 13 - (pos - 53)],
+        BLUE:   (pos) => [13 - (pos - 53), 7]
     }
 };
 
@@ -170,7 +176,11 @@ function getCoordinates(pos, player) {
     if (pos === 0) return GRID_CONFIG.BASE[player];
     
     if (pos >= 1 && pos <= TRACK_LENGTH) {
-        const offset = player === 'RED' ? 0 : 26;
+        let offset = 0;
+        if (player === 'GREEN') offset = 13;
+        if (player === 'YELLOW') offset = 26;
+        if (player === 'BLUE') offset = 39;
+        
         return GRID_CONFIG.TRACK[(pos - 1 + offset) % TRACK_LENGTH];
     }
 
@@ -243,11 +253,18 @@ function renderGameState() {
             }
 
             const coords = getCoordinates(pos, pKey);
-            const [r, c] = pos === 0 ? coords[idx] : coords;
-            const cellKey = `${r}-${c}`;
+            let [r, c] = pos === 0 ? coords[idx] : coords;
+            
+            // Adjust to center of the cell if on track/home path
+            if (pos > 0) {
+                r += 0.5;
+                c += 0.5;
+            }
+
+            const cellKey = `${Math.floor(r)}-${Math.floor(c)}`;
             
             // Stacking Logic: Show current turn tokens on top and spread out
-            const cellTokens = tokensByCell[cellKey];
+            const cellTokens = tokensByCell[cellKey] || [];
             // Sort cell tokens so the current turn's tokens are always "last" (on top)
             const sortedAtCell = [...cellTokens].sort((a, b) => {
                 if (a.pKey === gameState.turn && b.pKey !== gameState.turn) return 1;
@@ -260,7 +277,7 @@ function renderGameState() {
             const isMultiple = cellTokens.length > 1;
 
             // Calculate offset. Spread more if it's the active player's turn to make them easy to click
-            const offset = visualIdx * (isMultiple ? 4 : 0); 
+            const offset = (visualIdx - (cellTokens.length - 1) / 2) * (isMultiple ? 4 : 0); 
 
             token.style.top = `calc(${r * cellWidth}% + ${offset}px)`;
             token.style.left = `calc(${c * cellWidth}% + ${offset}px)`;
@@ -282,7 +299,7 @@ function renderGameState() {
     });
 
     // Update Status
-    ['RED', 'YELLOW'].forEach(color => {
+    ['RED', 'GREEN', 'YELLOW', 'BLUE'].forEach(color => {
         const el = document.getElementById(`status-${color.toLowerCase()}`);
         if (el) el.classList.toggle('active', gameState.turn === color);
     });
@@ -307,35 +324,48 @@ function moveToken(idx) {
     const currentPos = gameState.players[myPlayerType].tokens[idx];
     let nextPos = currentPos === 0 ? 1 : currentPos + gameState.diceValue;
 
+    const colors = ['RED', 'GREEN', 'YELLOW', 'BLUE'];
+    
     // Predictive state for capture logic
-    const opponent = myPlayerType === 'RED' ? 'YELLOW' : 'RED';
     const newPlayers = JSON.parse(JSON.stringify(gameState.players));
     newPlayers[myPlayerType].tokens[idx] = nextPos;
+
+    const getNextTurn = (currentTurn) => {
+        const idx = colors.indexOf(currentTurn);
+        return colors[(idx + 1) % colors.length];
+    };
+
+    const getAbs = (p, pType) => {
+        let offset = 0;
+        if (pType === 'GREEN') offset = 13;
+        if (pType === 'YELLOW') offset = 26;
+        if (pType === 'BLUE') offset = 39;
+        return (p - 1 + offset) % TRACK_LENGTH;
+    };
 
     let captured = false;
     const safePositions = [1, 9, 14, 22, 27, 35, 40, 48]; // Standard Ludo safe cells
 
     if (nextPos >= 1 && nextPos <= TRACK_LENGTH) {
-        const getAbs = (p, pType) => (pType === 'RED' ? p : (p + 26 > TRACK_LENGTH ? p + 26 - TRACK_LENGTH : p + 26));
         const myAbs = getAbs(nextPos, myPlayerType);
-        
-        // Star cells are safe from capture
         const isSafe = safePositions.includes(nextPos);
 
         if (!isSafe) {
-            newPlayers[opponent].tokens.forEach((oPos, oIdx) => {
-                if (oPos >= 1 && oPos <= TRACK_LENGTH && getAbs(oPos, opponent) === myAbs) {
-                    newPlayers[opponent].tokens[oIdx] = 0;
-                    captured = true;
-                }
+            Object.keys(newPlayers).forEach(pKey => {
+                if (pKey === myPlayerType) return;
+                newPlayers[pKey].tokens.forEach((oPos, oIdx) => {
+                    if (oPos >= 1 && oPos <= TRACK_LENGTH && getAbs(oPos, pKey) === myAbs) {
+                        newPlayers[pKey].tokens[oIdx] = 0;
+                        captured = true;
+                    }
+                });
             });
         }
     }
 
     let nextTurn = myPlayerType;
-    // Turn continues if: rolled a 6 OR captured a token OR reached home goal
     if (gameState.diceValue !== 6 && !captured && nextPos !== 58) {
-        nextTurn = opponent;
+        nextTurn = getNextTurn(gameState.turn);
     }
 
     const newState = {
@@ -424,7 +454,9 @@ rollBtn.onclick = () => {
         if (!canMove && val !== 6) {
             messageBox.textContent = `You rolled a ${val}. No moves! Switching turn...`;
             setTimeout(() => {
-                const nextTurn = (myPlayerType === 'RED' ? 'YELLOW' : 'RED');
+                const colors = ['RED', 'GREEN', 'YELLOW', 'BLUE'];
+                const nextIdx = (colors.indexOf(gameState.turn) + 1) % colors.length;
+                const nextTurn = colors[nextIdx];
                 gameState.turn = nextTurn;
                 gameState.diceValue = 0;
                 socket.emit('game-state-update', { roomId: currentRoomId, newState: gameState });

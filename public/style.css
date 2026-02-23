@@ -460,7 +460,8 @@ input:focus { border-color: var(--md-blue); }
     display: flex;
     align-items: center;
     justify-content: center;
-    transform-origin: center bottom;
+    transform-origin: center center;
+    transform: translate(-50%, -50%);
 }
 
 .token svg {
@@ -520,5 +521,8 @@ input:focus { border-color: var(--md-blue); }
     box-shadow: 0 4px 10px rgba(0,0,0,0.1);
 }
 
-#status-yellow { background: var(--md-yellow-container); color: var(--md-yellow); }
+#status-red { background: var(--ludo-red); color: white; }
+#status-green { background: var(--ludo-green); color: white; }
+#status-yellow { background: var(--ludo-yellow); color: #1e293b; }
+#status-blue { background: var(--ludo-blue); color: white; }
 
