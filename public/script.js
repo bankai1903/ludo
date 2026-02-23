@@ -89,23 +89,23 @@ function initBoard() {
 
             // Safe Spots (Stars) & Arrows based on image
             const safeSpots = [
-                { r: 6, c: 2, icon: '★' },
-                { r: 2, c: 8, icon: '★' },
-                { r: 8, c: 12, icon: '★' },
-                { r: 12, c: 6, icon: '★' }
+                { r: 8, c: 2, icon: '★', color: 'var(--ludo-red)' },
+                { r: 2, c: 6, icon: '★', color: 'var(--ludo-green)' },
+                { r: 6, c: 12, icon: '★', color: 'var(--ludo-yellow)' },
+                { r: 12, c: 8, icon: '★', color: 'var(--ludo-blue)' }
             ];
             
             const spot = safeSpots.find(s => s.r === r && s.c === c);
-            if (spot) cell.innerHTML = `<span class="star">${spot.icon}</span>`;
+            if (spot) cell.innerHTML = `<span class="star" style="color:${spot.color}">${spot.icon}</span>`;
 
             const entryArrows = [
-                { r: 7, c: 0, icon: '→', color: '#ea2127' },
-                { r: 0, c: 7, icon: '↓', color: '#11a24d' },
-                { r: 7, c: 14, icon: '←', color: '#fff200' },
-                { r: 14, c: 7, icon: '↑', color: '#00aeef' }
+                { r: 7, c: 1, icon: '→', color: '#fff' },
+                { r: 1, c: 7, icon: '↓', color: '#fff' },
+                { r: 7, c: 13, icon: '←', color: '#fff' },
+                { r: 13, c: 7, icon: '↑', color: '#fff' }
             ];
             const arrow = entryArrows.find(a => a.r === r && a.c === c);
-            if (arrow) cell.innerHTML = `<span class="arrow" style="color:${arrow.color}">${arrow.icon}</span>`;
+            if (arrow) cell.innerHTML = `<span class="arrow" style="color:${arrow.color}; text-shadow: 0 0 5px rgba(0,0,0,0.5)">${arrow.icon}</span>`;
 
             // Home Goal (Center 3x3)
             if (r === 6 && c === 6) {
