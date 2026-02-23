@@ -398,11 +398,25 @@ rollBtn.onclick = () => {
     socket.emit('game-state-update', { roomId: currentRoomId, newState: gameState });
     renderGameState();
 
+    // Visual eye-candy: Shuffle the number display during the roll
+    const shuffleInterval = setInterval(() => {
+        if (diceNumDisplay) {
+            diceNumDisplay.textContent = Math.floor(Math.random() * 6) + 1;
+        }
+    }, 100);
+
     setTimeout(() => {
+        clearInterval(shuffleInterval);
         const val = Math.floor(Math.random() * 6) + 1;
         gameState.diceValue = val;
         gameState.isRolling = false;
         renderGameState(); // Update dice animation immediately
+        
+        // Add a result flash effect
+        if (diceEl) {
+            diceEl.classList.add('dice-result-flash');
+            setTimeout(() => diceEl.classList.remove('dice-result-flash'), 500);
+        }
 
         const tokens = gameState.players[myPlayerType].tokens;
         const canMove = tokens.some(p => isValidMove(p, val));
@@ -421,7 +435,7 @@ rollBtn.onclick = () => {
             socket.emit('game-state-update', { roomId: currentRoomId, newState: gameState });
             renderGameState();
         }
-    }, 1500); // 1.5s animation
+    }, 1200); // Slightly shorter for snappier feel
 };
 
 initBoard();

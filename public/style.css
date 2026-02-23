@@ -397,17 +397,32 @@ input:focus { border-color: var(--md-blue); }
 /* Enhanced Dice Roll Animation */
 @keyframes rolling {
     0% { transform: rotateX(0deg) rotateY(0deg) rotateZ(0deg); }
-    100% { transform: rotateX(360deg) rotateY(720deg) rotateZ(360deg); }
+    25% { transform: rotateX(180deg) rotateY(90deg) rotateZ(45deg); }
+    50% { transform: rotateX(360deg) rotateY(180deg) rotateZ(90deg); }
+    75% { transform: rotateX(540deg) rotateY(270deg) rotateZ(135deg); }
+    100% { transform: rotateX(720deg) rotateY(360deg) rotateZ(180deg); }
 }
 
 @keyframes dice-shake {
-    0% { transform: scale(1); }
-    50% { transform: scale(1.1) translateY(-10px); }
-    100% { transform: scale(1); }
+    0% { transform: scale(1) translateY(0); }
+    25% { transform: scale(1.1) translateY(-15px) rotate(5deg); }
+    50% { transform: scale(1.05) translateY(0) rotate(-5deg); }
+    75% { transform: scale(1.15) translateY(-20px) rotate(3deg); }
+    100% { transform: scale(1) translateY(0); }
 }
 
 .dice-3d.rolling {
-    animation: rolling 0.5s infinite linear, dice-shake 0.3s infinite;
+    animation: rolling 0.4s infinite linear, dice-shake 0.4s infinite ease-in-out;
+}
+
+@keyframes dice-result {
+    0% { transform: scale(0.8); }
+    50% { transform: scale(1.1); }
+    100% { transform: scale(1); }
+}
+
+.dice-result-flash {
+    animation: dice-result 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
 }
 
 .roll-btn {
