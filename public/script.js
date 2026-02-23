@@ -276,12 +276,14 @@ function moveToken(idx) {
     newPlayers[myPlayerType].tokens[idx] = nextPos;
 
     let captured = false;
-    const safePositions = [1, 9, 14, 22, 27, 35, 40, 48];
+    const safePositions = [1, 9, 14, 22, 27, 35, 40, 48]; // Standard Ludo safe cells
 
     if (nextPos >= 1 && nextPos <= TRACK_LENGTH) {
         const getAbs = (p, pType) => (pType === 'RED' ? p : (p + 26 > TRACK_LENGTH ? p + 26 - TRACK_LENGTH : p + 26));
         const myAbs = getAbs(nextPos, myPlayerType);
-        const isSafe = safePositions.includes(nextPos % TRACK_LENGTH);
+        
+        // Star cells are safe from capture
+        const isSafe = safePositions.includes(nextPos);
 
         if (!isSafe) {
             newPlayers[opponent].tokens.forEach((oPos, oIdx) => {
@@ -294,7 +296,8 @@ function moveToken(idx) {
     }
 
     let nextTurn = myPlayerType;
-    if (!captured && gameState.diceValue !== 6) {
+    // Turn continues if: rolled a 6 OR captured a token OR reached home goal
+    if (gameState.diceValue !== 6 && !captured && nextPos !== 58) {
         nextTurn = opponent;
     }
 
