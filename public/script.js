@@ -99,13 +99,13 @@ function initBoard() {
             if (spot) cell.innerHTML = `<span class="star" style="color:${spot.color}">${spot.icon}</span>`;
 
             const entryArrows = [
-                { r: 7, c: 1, icon: '→', color: '#fff' },
-                { r: 1, c: 7, icon: '↓', color: '#fff' },
-                { r: 7, c: 13, icon: '←', color: '#fff' },
-                { r: 13, c: 7, icon: '↑', color: '#fff' }
+                { r: 7, c: 2, icon: '→', color: 'var(--ludo-red)' },
+                { r: 2, c: 7, icon: '↓', color: 'var(--ludo-green)' },
+                { r: 7, c: 12, icon: '←', color: 'var(--ludo-yellow)' },
+                { r: 12, c: 7, icon: '↑', color: 'var(--ludo-blue)' }
             ];
             const arrow = entryArrows.find(a => a.r === r && a.c === c);
-            if (arrow) cell.innerHTML = `<span class="arrow" style="color:${arrow.color}; text-shadow: 0 0 5px rgba(0,0,0,0.5)">${arrow.icon}</span>`;
+            if (arrow) cell.innerHTML = `<span class="arrow" style="color:${arrow.color}; text-shadow: 0 0 5px rgba(255,255,255,0.8), 0 0 10px rgba(0,0,0,0.5)">${arrow.icon}</span>`;
 
             // Home Goal (Center 3x3)
             if (r === 6 && c === 6) {
