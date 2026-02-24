@@ -343,11 +343,11 @@ function moveToken(idx) {
     };
 
     let captured = false;
-    const safePositions = [1, 9, 14, 22, 27, 35, 40, 48]; // Standard Ludo safe cells
+    const safeTrackIndices = [0, 9, 13, 22, 26, 35, 39, 48]; // Absolute indices in TRACK: Starts and Stars
 
     if (nextPos >= 1 && nextPos <= TRACK_LENGTH) {
         const myAbs = getAbs(nextPos, myPlayerType);
-        const isSafe = safePositions.includes(nextPos);
+        const isSafe = safeTrackIndices.includes(myAbs);
 
         if (!isSafe) {
             Object.keys(newPlayers).forEach(pKey => {
