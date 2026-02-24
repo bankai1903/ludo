@@ -473,9 +473,9 @@ input:focus { border-color: var(--md-blue); }
 
 /* Pulse Animation for Current Turn's Tokens */
 @keyframes pulse-active {
-    0% { transform: scale(1); filter: drop-shadow(0 0 0 rgba(13, 71, 161, 0)); }
-    50% { transform: scale(1.15); filter: drop-shadow(0 0 15px var(--md-blue)); }
-    100% { transform: scale(1); filter: drop-shadow(0 0 0 rgba(13, 71, 161, 0)); }
+    0% { transform: translate(-50%, -50%) scale(1); filter: drop-shadow(0 0 0 rgba(13, 71, 161, 0)); }
+    50% { transform: translate(-50%, -50%) scale(1.15); filter: drop-shadow(0 0 15px var(--md-blue)); }
+    100% { transform: translate(-50%, -50%) scale(1); filter: drop-shadow(0 0 0 rgba(13, 71, 161, 0)); }
 }
 
 .token.clickable {
@@ -485,7 +485,7 @@ input:focus { border-color: var(--md-blue); }
 }
 
 .token.clickable:hover {
-    transform: scale(1.25) translateY(-5px);
+    transform: translate(-50%, -50%) scale(1.25) translateY(-5px);
 }
 
 .token svg {

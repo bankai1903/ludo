@@ -159,10 +159,10 @@ const GRID_CONFIG = {
         [7, 0]
     ],
     BASE: {
-        RED:    [[1.5, 1.5], [1.5, 4.5], [4.5, 1.5], [4.5, 4.5]],
-        GREEN:  [[1.5, 10.5], [1.5, 13.5], [4.5, 10.5], [4.5, 13.5]],
-        YELLOW: [[10.5, 10.5], [10.5, 13.5], [13.5, 10.5], [13.5, 13.5]],
-        BLUE:   [[10.5, 1.5], [10.5, 4.5], [13.5, 1.5], [13.5, 4.5]]
+        RED:    [[2, 2], [2, 4], [4, 2], [4, 4]],
+        GREEN:  [[2, 11], [2, 13], [4, 11], [4, 13]],
+        YELLOW: [[11, 11], [11, 13], [13, 11], [13, 13]],
+        BLUE:   [[11, 2], [11, 4], [13, 2], [13, 4]]
     },
     HOME_START: {
         RED:    (pos) => [7, 1 + (pos - 53)],
@@ -230,7 +230,6 @@ function renderGameState() {
     // Group tokens by cell to handle stacking
     const tokensByCell = {};
     Object.entries(gameState.players).forEach(([pKey, pData]) => {
-        if (pKey !== 'RED' && pKey !== 'YELLOW') return;
         pData.tokens.forEach((pos, idx) => {
             const coords = getCoordinates(pos, pKey);
             const r_c = pos === 0 ? coords[idx] : coords;
@@ -241,7 +240,6 @@ function renderGameState() {
     });
 
     Object.entries(gameState.players).forEach(([pKey, pData]) => {
-        if (pKey !== 'RED' && pKey !== 'YELLOW') return;
         pData.tokens.forEach((pos, idx) => {
             const tokenId = `token-${pKey}-${idx}`;
             let token = document.getElementById(tokenId);
@@ -287,9 +285,9 @@ function renderGameState() {
             
             // "Pop" effect for active player if overlapping
             if (isActivePlayer && isMultiple) {
-                token.style.transform = 'scale(1.2)';
+                token.style.transform = 'translate(-50%, -50%) scale(1.2)';
             } else {
-                token.style.transform = 'scale(1)';
+                token.style.transform = 'translate(-50%, -50%) scale(1)';
             }
             
             const isMyTurn = gameState.turn === myPlayerType && pKey === myPlayerType;
@@ -333,8 +331,9 @@ function moveToken(idx) {
     newPlayers[myPlayerType].tokens[idx] = nextPos;
 
     const getNextTurn = (currentTurn) => {
-        const turnIdx = colors.indexOf(currentTurn);
-        return colors[(turnIdx + 1) % colors.length];
+        const players = Object.keys(gameState.players);
+        const turnIdx = players.indexOf(currentTurn);
+        return players[(turnIdx + 1) % players.length];
     };
 
     const getAbs = (p, pType) => {
@@ -451,12 +450,12 @@ rollBtn.onclick = () => {
         const tokens = gameState.players[myPlayerType].tokens;
         const canMove = tokens.some(p => isValidMove(p, val));
 
-        if (!canMove && val !== 6) {
+        if (!canMove) {
             messageBox.textContent = `You rolled a ${val}. No moves! Switching turn...`;
             setTimeout(() => {
-                const colors = ['RED', 'YELLOW'];
-                const nextIdx = (colors.indexOf(gameState.turn) + 1) % colors.length;
-                const nextTurn = colors[nextIdx];
+                const players = Object.keys(gameState.players);
+                const nextIdx = (players.indexOf(gameState.turn) + 1) % players.length;
+                const nextTurn = players[nextIdx];
                 gameState.turn = nextTurn;
                 gameState.diceValue = 0;
                 socket.emit('game-state-update', { roomId: currentRoomId, newState: gameState });
